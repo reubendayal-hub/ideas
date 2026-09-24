@@ -22,9 +22,9 @@ CLAUDE.md                  # this file (not served in any linked way)
 
 ## Style conventions (match the existing pages)
 
-- Colour tokens on `:root`: `--navy #1e2f4a`, `--gold #b89a6a`, `--golddk #9a7d4f`, `--cream`, `--bg`, `--card`, `--border`, `--text`, `--muted`.
-- Dark mode: redefine the tokens under `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) … }` and again under `:root[data-theme="dark"]`.
-- System font stack. Mobile-first: `viewport-fit=cover`, safe-area insets, no horizontal scroll at phone width.
+- **Light only, matching the Nordic Anchor site.** Reuben finds the dark variant too dark, so pages have no dark mode and no `prefers-color-scheme: dark` rules, and they declare `<meta name="color-scheme" content="light">`.
+- Colour tokens on `:root`: `--navy #1e2f4a`, `--gold #b89a6a`, `--golddk #9a7d4f`, `--bg #f9f6f2` (Nordic Anchor cream), `--card #ffffff`, `--border #e4ddd3`, `--text #2a2a2a`, `--muted #767676`.
+- Font: Newsreader from Google Fonts (`font-family: 'Newsreader', Georgia, serif`), the same as nordicanchor.dk. Mobile-first: `viewport-fit=cover`, safe-area insets, no horizontal scroll at phone width.
 
 ## Adding a page
 
