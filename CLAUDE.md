@@ -36,7 +36,7 @@ CLAUDE.md                  # this file (not served in any linked way)
 ## Deploy
 
 - Hosted on Vercel as a static project called `ideas`, linked through `.vercel/` (gitignored). Vercel serves `/<slug>` from `<slug>/index.html`.
-- Domains to share: `https://share.nordicanchor.dk/<slug>` (branded; CNAME at Simply.com, where nordicanchor.dk's DNS lives) and `https://reubendayal.vercel.app/<slug>`. Don't share `ideas-*.vercel.app` URLs: per-deployment URLs sit behind Vercel login protection.
+- Share links as `https://reubendayal.vercel.app/<slug>`. That domain is attached to the `ideas` project, so every `vercel --prod` updates it. Reuben chose it over a nordicanchor.dk subdomain to keep these pages separate from the business brand. Don't share `ideas-*.vercel.app` URLs: per-deployment URLs sit behind Vercel login protection.
 - `vercel --prod` deploys production. The project may also be connected to GitHub for auto-deploys on push to `main`; check the Vercel dashboard before assuming it is.
 - These pages are public once deployed. Don't add anything private (member personal data, contact details, finances) unless Reuben confirms it's OK to publish.
 
