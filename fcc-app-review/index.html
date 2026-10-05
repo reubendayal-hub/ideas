@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FCC App Review · Trainers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f3d21; --ink2:#3d5a47; --mute:#6b7f72;
+  --bg:#f3f6f2; --card:#ffffff; --line:#d9e2da;
+  --pitch:#14532d; --lime:#a3e635; --gold:#c9970c; --ball:#b91c1c; --sky:#2563eb;
+  --chip:#eef3ee;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#e6f2e8; --ink2:#b7cbbd; --mute:#8aa094;
+    --bg:#0c1a12; --card:#13271b; --line:#24402e;
+    --pitch:#1d6b3b; --chip:#1a3324; --gold:#e3b23c; --ball:#ef4444; --sky:#60a5fa;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e6f2e8; --ink2:#b7cbbd; --mute:#8aa094;
+  --bg:#0c1a12; --card:#13271b; --line:#24402e;
+  --pitch:#1d6b3b; --chip:#1a3324; --gold:#e3b23c; --ball:#ef4444; --sky:#60a5fa;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3,.cond{font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;letter-spacing:.2px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+
+.hero{background:var(--pitch);color:#fff;padding:28px 20px 22px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:-10%;right:-10%;bottom:14px;height:2px;background:rgba(255,255,255,.35)}
+.hero .wrap{position:relative;z-index:1}
+.hero h1{margin:0;font-size:clamp(34px,8vw,52px);line-height:.95;font-weight:800}
+.hero p{margin:10px 0 0;max-width:34em;color:rgba(255,255,255,.85)}
+.over{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px;align-items:center}
+.over i{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.55);display:block}
+.over i.on{background:var(--lime);border-color:var(--lime)}
+.over span{font-size:14px;color:rgba(255,255,255,.85);margin-left:6px}
+
+.wrap{max-width:820px;margin:0 auto}
+.tabs{display:flex;gap:4px;padding:10px 16px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:8px 14px;border-radius:999px;font-weight:700;cursor:pointer;color:var(--mute)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+main{padding:8px 16px 120px}
+
+.intro{margin:18px 0 6px;color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--mute);margin-bottom:8px}
+.legend b{color:var(--ink)}
+
+.group{margin-top:28px}
+.keyrow{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 4px}.keyrow span{font-size:13px;font-weight:600;padding:2px 10px;border-radius:999px;color:#fff;background:var(--c)}
+.group h2{font-size:26px;margin:0;font-weight:700}
+.group .who{color:var(--mute);font-size:14px;margin:2px 0 10px}
+
+.feat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin-bottom:10px}
+.feat.done{border-left:5px solid var(--lime)}
+.feat h3{margin:0;font-size:21px;font-weight:700;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.feat h3 .tag{font-family:Barlow,sans-serif;font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;background:var(--chip);color:var(--ink2)}
+.feat h3 .tag.warn{background:rgba(201,151,12,.15);color:var(--gold)}
+.feat p{margin:4px 0 10px;color:var(--ink2);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--chip);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:600;cursor:pointer}
+.chip[aria-pressed="true"][data-v="keep"]{background:var(--pitch);border-color:var(--pitch);color:#fff}
+.chip[aria-pressed="true"][data-v="change"]{background:var(--sky);border-color:var(--sky);color:#fff}
+.chip[aria-pressed="true"][data-v="trim"]{background:var(--gold);border-color:var(--gold);color:#fff}
+.chip[aria-pressed="true"][data-v="remove"]{background:var(--ball);border-color:var(--ball);color:#fff}
+.chip[aria-pressed="true"][data-v="new"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.chip[aria-pressed="true"][data-v="must"]{background:var(--pitch);border-color:var(--pitch);color:#fff}
+.chip[aria-pressed="true"][data-v="nice"]{background:var(--sky);border-color:var(--sky);color:#fff}
+.chip[aria-pressed="true"][data-v="skip"]{background:var(--mute);border-color:var(--mute);color:#fff}
+.addc{background:none;border:0;color:var(--mute);font-size:14px;padding:6px 0 0;cursor:pointer;text-decoration:underline}
+.feat textarea{margin-top:8px}
+
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 4px}
+input[type=text],textarea,select{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:10px 12px}
+textarea{min-height:70px;resize:vertical}
+
+.send{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:16px;margin-top:30px}
+.send h2{margin:0;font-size:26px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.wa{background:#1f9d55;color:#fff}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn.sec{background:var(--chip);color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:14px;border-radius:9px}
+.note{font-size:14px;color:var(--mute);margin-top:8px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;max-width:90vw}
+.toast.on{opacity:1}
+
+/* sections */
+.sec{margin-top:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+.sec>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border-left:8px solid var(--c)}
+.sec>summary::-webkit-details-marker{display:none}
+.sec .sw{width:12px;height:12px;border-radius:3px;background:var(--c);flex:none;transform:rotate(45deg);transition:transform .15s}
+.sec[open] .sw{transform:rotate(0)}
+.sec .st{flex:1;min-width:0}
+.sec .st h2{margin:0;font-size:24px;line-height:1.1;color:var(--c)}
+.sec .st .where{font-size:13px;color:var(--mute)}
+.sec .cnt{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;color:var(--mute);white-space:nowrap}
+.sec .cnt.full{color:var(--c)}
+.sec .body{padding:4px 12px 12px;border-left:8px solid var(--c)}
+.sec .callout{background:color-mix(in srgb,var(--c) 10%,transparent);border-radius:10px;padding:10px 12px;margin:6px 0 10px;font-size:15px;color:var(--ink)}
+.sec .feat{border-color:color-mix(in srgb,var(--c) 25%,var(--line))}
+.feat.done{border-left:1px solid var(--line)}
+.feat h3 .ok{font-family:Barlow,sans-serif;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--c);color:#fff;display:none}
+.feat.done h3 .ok{display:inline}
+.bsec{margin-top:14px;font-family:"Barlow Condensed",sans-serif;font-size:20px;font-weight:700;color:var(--c);border-bottom:2px solid var(--c);padding-bottom:2px}
+.chip[aria-pressed="true"][data-v="less"]{background:var(--gold);border-color:var(--gold);color:#fff}
+.chip[aria-pressed="true"][data-v="off"]{background:var(--ball);border-color:var(--ball);color:#fff}
+.chip[aria-pressed="true"][data-v="unseen"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+/* board */
+.stat{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 6px}
+.stat div{font-size:14px;color:var(--mute)}
+.stat b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:34px;color:var(--ink);line-height:1}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:16px}
+.panel h2{margin:0 0 4px;font-size:24px}
+.row{border-top:1px solid var(--line);padding:10px 0}
+.row:first-of-type{border-top:0}
+.row .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.row .name{font-weight:700}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--chip);margin:6px 0 4px}
+.bar span{display:block;height:100%}
+.counts{font-size:13px;color:var(--mute)}
+.flag{font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:rgba(185,28,28,.12);color:var(--ball)}
+.flag.blue{background:rgba(37,99,235,.12);color:var(--sky)}
+.cmt{font-size:14px;color:var(--ink2);margin:4px 0 0;padding-left:10px;border-left:3px solid var(--line)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+@media (max-width:520px){.grid2{grid-template-columns:1fr}}
+.bl .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.bl select{width:auto;padding:4px 8px;font-size:13px;border-radius:8px}
+.pill{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip)}
+.pill.must{background:var(--pitch);color:#fff}.pill.should{background:var(--sky);color:#fff}.pill.could{background:var(--gold);color:#fff}.pill.wont{background:var(--mute);color:#fff}
+.empty{color:var(--mute);font-size:15px;padding:8px 0}
+.locked{background:var(--chip);border-radius:14px;padding:16px;margin-top:18px;color:var(--ink2)}
+details summary{cursor:pointer;font-weight:700}
+.hide{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1>Make the app work for trainers</h1>
+    <p>What the app already does, grouped by where you find it. Tell us what saves you time, what gets in the way, and which emails you'd rather not get. About 5 minutes.</p>
+    <div class="over" id="over" aria-label="Progress"></div>
+  </div>
+</header>
+
+<nav class="tabs wrap" role="tablist">
+  <button role="tab" id="t-review" aria-selected="true">Review features</button>
+  <button role="tab" id="t-board" aria-selected="false">Board</button>
+</nav>
+
+<main class="wrap">
+  <section id="v-review">
+    <p class="intro">Open a section, tap one answer per feature, skip anything that isn't yours. Start with Coach HQ and Emails — those matter most for trainers.</p>
+    <div class="legend">
+      <span><b>Keep</b> works, leave it</span><span><b>Change</b> useful but needs fixing</span>
+      <span><b>Trim</b> simplify or hide</span><span><b>Remove</b> nobody needs it</span><span><b>New to me</b> didn't know it existed</span>
+    </div>
+    <div id="groups"></div>
+
+    <div class="send" id="send">
+      <h2>Send your feedback</h2>
+      <label for="who">Your name</label>
+      <input type="text" id="who" autocomplete="name" placeholder="e.g. Zeb">
+      <label for="wish">Anything missing? What do you still do on WhatsApp that the app should handle?</label>
+      <textarea id="wish" placeholder="Indoor season needs, 2027 ideas, annoyances…"></textarea>
+      <div class="btns">
+        <a class="btn wa" id="wa" href="#" target="_blank" rel="noopener">Send to Reuben on WhatsApp</a>
+        <button class="btn sec" id="copy">Copy as text</button>
+        <button class="btn pri hide" id="saveDirect">Save to board</button>
+      </div>
+      <p class="note" id="sendNote">WhatsApp opens with your answers filled in — pick Reuben's chat and send.</p>
+      <textarea id="copyBox" class="hide" readonly aria-label="Your feedback as text"></textarea>
+    </div>
+  </section>
+
+  <section id="v-board" class="hide">
+    <div id="boardLocked" class="locked">The board is where Reuben collects everyone's answers. Use <b>Review features</b> to send yours.</div>
+    <div id="boardBody" class="hide">
+      <div class="stat">
+        <div><b id="sResp">0</b>responses</div>
+        <div><b id="sBack">0</b>backlog items</div>
+        <div><b id="sFlag">0</b>features flagged</div>
+      </div>
+
+      <div class="panel">
+        <h2>Import a WhatsApp reply</h2>
+        <p class="note" style="margin-top:0">Paste a trainer's message exactly as received.</p>
+        <textarea id="importBox" placeholder="FCC APP FEEDBACK&#10;Name: …"></textarea>
+        <div class="btns"><button class="btn pri sm" id="importBtn">Import reply</button></div>
+      </div>
+
+      <div class="panel">
+        <h2>Parking lot</h2>
+        <p class="note" style="margin-top:0">Capture ideas as they come up in the meeting. Sort them out afterwards.</p>
+        <div class="grid2">
+          <div><label for="bTitle">Idea or change</label><input type="text" id="bTitle" placeholder="e.g. Car pool for youth teams only"></div>
+          <div><label for="bBy">Raised by</label><input type="text" id="bBy" placeholder="Name"></div>
+          <div><label for="bType">Type</label><select id="bType"><option value="change">Change</option><option value="new">New feature</option><option value="remove">Remove / trim</option><option value="bug">Bug</option></select></div>
+          <div><label for="bPri">Priority</label><select id="bPri"><option value="">Not set</option><option value="must">Must</option><option value="should">Should</option><option value="could">Could</option><option value="wont">Won't (now)</option></select></div>
+        </div>
+        <label for="bNotes">Notes</label><textarea id="bNotes" style="min-height:50px"></textarea>
+        <div class="btns"><button class="btn pri sm" id="bAdd">Add to backlog</button></div>
+      </div>
+
+      <div class="panel bl">
+        <h2>Backlog</h2>
+        <div id="backlog"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Results by section</h2>
+        <p class="note" style="margin-top:0">Grouped by app section, most disputed first. Red = more people want it gone or reduced than kept. Blue = most people didn't know it existed.</p>
+        <div id="verdicts"></div>
+      </div>
+
+
+      <div class="panel">
+        <h2>Wishlist comments</h2>
+        <div id="wishes"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Responses</h2>
+        <div id="resps"></div>
+      </div>
+
+      <div class="btns" style="margin-top:18px">
+        <button class="btn pri" id="exportBtn">Copy everything for Claude</button>
+      </div>
+      <textarea id="exportBox" class="hide" readonly aria-label="Export"></textarea>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const STD = [["keep","Keep"],["change","Change"],["trim","Trim"],["remove","Remove"],["new","New to me"]];
+const MAIL = [["keep","Keep"],["less","Less often"],["off","Switch off"],["unseen","Never noticed it"]];
+const WANTS = [["must","Must have"],["nice","Nice to have"],["skip","Skip"]];
+const SECTIONS = [
+  { id:"coach", title:"Coach HQ", where:"Coach HQ tab — coaches and admins only", c:"#15803d", open:true, opts:STD, items:[
+    {id:"attendance", t:"Mark attendance", d:"Tick who turned up. Currently possible from the session and from the Progress tracker."},
+    {id:"progress", t:"Progress tracker", d:"Rate players on batting, bowling, fielding, keeping and cricket IQ. Add player notes."},
+    {id:"seasonplan", t:"Season plan", d:"Pre-season plus phases 1–3, each with a training focus."},
+    {id:"coordination", t:"Coach coordination", d:"Indoor and outdoor plan, ground blocked, match clashes, reassign a coach."},
+    {id:"sessionnotes", t:"Session notes", d:"Tile in Coach HQ that isn't built yet — shows 'coming soon'.", warn:"Not built"}
+  ]},
+  { id:"mail", title:"Emails", where:"Sent automatically — nothing to open", c:"#dc2626", open:true, opts:MAIL,
+    callout:"Today one booking can trigger <b>three emails</b>: a confirmation, a reminder 2 days before and another the day before. Coaches enrolled in weekly sessions get that for every session. Tell us which ones are worth it.",
+    items:[
+    {id:"mail_confirm", t:"Booking confirmation", d:"Sent the moment you book or join a session."},
+    {id:"mail_48", t:"Reminder 2 days before", d:"\"Reminder: you're booked in\" — sent two days ahead."},
+    {id:"mail_24", t:"Reminder the day before", d:"\"🚨 TOMORROW: you're booked in\" — sent the evening before."},
+    {id:"mail_cancel", t:"Session cancelled notice", d:"Sent to booked players when a coach cancels a training."},
+    {id:"mail_conflict", t:"Coach clash alert", d:"Daily 8am email when a coach is double-booked with a match. Goes to Reuben only today — should the coach get it?"}
+  ]},
+  { id:"sessions", title:"Schedule and sessions", where:"Schedule and Book tabs", c:"#2563eb", opts:STD, items:[
+    {id:"schedule", t:"Schedule", d:"All nets sessions and matches in one place. Today's training, My vs All sessions, net-by-net timeline, fixtures alongside."},
+    {id:"book", t:"Book or join a session", d:"Book a net or join one. Warns about clashes, saves to your calendar, auto-enrols you in weekly slots."},
+    {id:"support", t:"I'll support this session", d:"Coaches flag which sessions they'll cover."},
+    {id:"cancel", t:"Cancel a training", d:"Cancel one training or the whole booking and notify players."},
+    {id:"poll", t:"Session poll", d:"Vote on the focus — batting, bowling, fielding or mixed. Added to every weekly session."},
+    {id:"carpool", t:"Car pool", d:"Per session: offer a lift, ask for one, or mark own transport."},
+    {id:"weather", t:"Weather", d:"Ground forecast with a rain warning on the schedule."}
+  ]},
+  { id:"team", title:"Teams and matches", where:"Team Availability and Captain tabs", c:"#7c3aed", opts:STD, items:[
+    {id:"availability", t:"Availability", d:"Players mark themselves away on match days. Coaches see the full-season team view."},
+    {id:"duty", t:"Parent duty roster", d:"Youth teams: tracks which parents have covered a session (yellow = not yet)."},
+    {id:"captainxi", t:"Captain's XI", d:"Pick the eleven from availability, set match and report times, share the team on WhatsApp."}
+  ]},
+  { id:"profile", title:"Profile and help", where:"Profile tab", c:"#0d9488", opts:STD, items:[
+    {id:"family", t:"Profile and family accounts", d:"Link parents and children, manage several kids from one login, player attributes, change PIN."},
+    {id:"help", t:"Help and contact", d:"In-app guide plus a form to report a problem or ask a question."}
+  ]},
+  { id:"admin", title:"Admin panel", where:"Reuben and club admins — good to know it exists", c:"#64748b", opts:STD, items:[
+    {id:"members", t:"Members and join requests", d:"Approve new members, verify emails, link children, reset PINs."},
+    {id:"groups", t:"Groups, coaches and captains", d:"Set up teams and assign coaches and captains."},
+    {id:"recurring", t:"Weekly slots", d:"Training slots that create sessions automatically each week."},
+    {id:"blocknets", t:"Block nets", d:"Block the nets for matches, events or maintenance."},
+    {id:"logs", t:"Logs and backup", d:"Reminder log, audit log, data export."}
+  ]},
+  { id:"ideas", title:"Ideas on the table", where:"Not built yet — how much would you use it?", c:"#b45309", opts:WANTS, kind:"idea", items:[
+    {id:"notifprefs", t:"Choose my own emails", d:"Each person picks which emails they get, or a weekly summary instead."},
+    {id:"push", t:"Push notifications", d:"Phone alerts instead of email."},
+    {id:"fixtures", t:"All-club fixtures view", d:"Every team's matches for the season, filter by team."},
+    {id:"passive", t:"Active and passive members", d:"Passive members drop out of duty rosters and fairness counts."},
+    {id:"offline", t:"Works with poor signal", d:"App keeps working at indoor nets with weak reception."},
+    {id:"scoring", t:"Live scoring", d:"Ball-by-ball scoring with a live view for parents. Built but not released."},
+    {id:"stats", t:"Club stats and leaderboards", d:"Top batters, bowlers, catches by season."}
+  ]}
+];
+const ALL = SECTIONS.flatMap(s=>s.items.map(f=>({...f, sec:s})));
+const FEATS = ALL.filter(f=>f.sec.kind!=="idea"), IDEAS = ALL.filter(f=>f.sec.kind==="idea");
+const VERDICTS = STD;
+const byTitle = {}; ALL.forEach(f=>byTitle[f.t.toLowerCase()]=f.id);
+const fById = id => ALL.find(f=>f.id===id);
+const titleOf = id => (fById(id)||{t:id}).t;
+const LABELS = [...STD,...MAIL.filter(([v])=>v!=="keep"),...WANTS];
+const state = { votes:{}, wants:{}, comments:{} };
+const $ = s => document.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2600)}
+
+/* ---------- review form ---------- */
+function featCard(f, opts, kind){
+  const sel = kind==="idea" ? state.wants[f.id] : state.votes[f.id];
+  return `<article class="feat ${sel?"done":""}" data-id="${f.id}" data-kind="${kind}">
+    <h3>${esc(f.t)}${f.warn?`<span class="tag warn">${esc(f.warn)}</span>`:""}<span class="ok">✓</span></h3>
+    <p>${esc(f.d)}</p>
+    <div class="chips" role="group" aria-label="${esc(f.t)}">${opts.map(([v,l])=>`<button class="chip" data-v="${v}" aria-pressed="${sel===v}">${l}</button>`).join("")}</div>
+    ${state.comments[f.id]!==undefined
+      ? `<textarea data-c="${f.id}" placeholder="Your comment" aria-label="Comment on ${esc(f.t)}">${esc(state.comments[f.id])}</textarea>`
+      : `<button class="addc" data-addc="${f.id}">Add a comment</button>`}
+  </article>`;
+}
+const openState = {}; SECTIONS.forEach(s=>openState[s.id]=!!s.open);
+function secCount(s){ const store=s.kind==="idea"?state.wants:state.votes; return s.items.filter(f=>store[f.id]).length; }
+function renderReview(){
+  $("#groups").innerHTML = `<div class="keyrow">${SECTIONS.map(s=>`<span style="--c:${s.c}">${esc(s.title)}</span>`).join("")}</div>` +
+    SECTIONS.map(s=>{ const n=secCount(s);
+    return `<details class="sec" data-sec="${s.id}" style="--c:${s.c}" ${openState[s.id]?"open":""}>
+      <summary><span class="sw"></span><span class="st"><h2>${esc(s.title)}</h2><span class="where">${esc(s.where)}</span></span>
+      <span class="cnt ${n===s.items.length?"full":""}" data-cnt="${s.id}">${n}/${s.items.length}</span></summary>
+      <div class="body">${s.callout?`<p class="callout">${s.callout}</p>`:""}${s.items.map(f=>featCard(f,s.opts,s.kind==="idea"?"idea":"feat")).join("")}</div>
+    </details>`;}).join("");
+  renderOver();
+}
+$("#groups").addEventListener("toggle",e=>{ const d=e.target.closest?.("details.sec"); if(d) openState[d.dataset.sec]=d.open; }, true);
+function updateCounts(){ SECTIONS.forEach(s=>{ const el=document.querySelector(`[data-cnt="${s.id}"]`); if(!el) return; const n=secCount(s); el.textContent=`${n}/${s.items.length}`; el.classList.toggle("full",n===s.items.length); }); }
+function renderOver(){
+  const total = FEATS.length + IDEAS.length;
+  const done = Object.keys(state.votes).length + Object.keys(state.wants).length;
+  const n = Math.min(total, 30);
+  let h=""; for(let i=0;i<n;i++) h+=`<i class="${i < Math.round(done/total*n) ? "on":""}"></i>`;
+  $("#over").innerHTML = h + `<span>${done} of ${total} reviewed</span>`;
+}
+$("#groups").addEventListener("click",e=>{
+  const chip = e.target.closest(".chip");
+  if(chip){
+    const card = chip.closest(".feat"), id = card.dataset.id, store = card.dataset.kind==="idea"?state.wants:state.votes;
+    store[id] = store[id]===chip.dataset.v ? undefined : chip.dataset.v;
+    if(!store[id]) delete store[id];
+    card.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c.dataset.v===store[id]));
+    card.classList.toggle("done", !!store[id]);
+    renderOver(); updateCounts(); return;
+  }
+  const add = e.target.closest("[data-addc]");
+  if(add){ const id=add.dataset.addc; state.comments[id]=""; const ta=document.createElement("textarea"); ta.dataset.c=id; ta.placeholder="Your comment"; ta.setAttribute("aria-label","Comment"); add.replaceWith(ta); ta.focus(); }
+});
+$("#groups").addEventListener("input",e=>{ if(e.target.dataset.c) state.comments[e.target.dataset.c]=e.target.value; });
+
+function collect(){
+  const comments={}; for(const [k,v] of Object.entries(state.comments)) if(v.trim()) comments[k]=v.trim();
+  return { name:$("#who").value.trim(), votes:{...state.votes}, wants:{...state.wants}, comments, wishlist:$("#wish").value.trim() };
+}
+function toText(r){
+  const L=["FCC APP FEEDBACK","Name: "+(r.name||"?")];
+  SECTIONS.forEach(s=>{
+    const store = s.kind==="idea" ? r.wants : r.votes;
+    const lines = s.opts.map(([v,l])=>{ const xs=s.items.filter(f=>store[f.id]===v).map(f=>f.t); return xs.length?`${l}: ${xs.join("; ")}`:""; }).filter(Boolean);
+    if(lines.length){ L.push("", "— "+s.title); L.push(...lines); }
+  });
+  const cs=Object.entries(r.comments); if(cs.length){ L.push("","Comments:"); cs.forEach(([id,c])=>L.push(`• ${titleOf(id)}: ${c.replace(/\n+/g," ")}`)); }
+  if(r.wishlist) L.push("","Wishlist: "+r.wishlist);
+  return L.join("\n");
+}
+function refreshWA(){ $("#wa").href = "https://wa.me/?text=" + encodeURIComponent(toText(collect())); }
+$("#wa").addEventListener("click",e=>{
+  if(!$("#who").value.trim()){ e.preventDefault(); toast("Add your name first"); $("#who").focus(); return; }
+  refreshWA();
+});
+$("#wa").addEventListener("pointerdown",refreshWA); $("#wa").addEventListener("focus",refreshWA);
+async function copyText(text, box){
+  try{ await navigator.clipboard.writeText(text); toast("Copied"); }
+  catch{ box.value=text; box.classList.remove("hide"); box.style.minHeight="180px"; box.select(); toast("Select all and copy the text below"); }
+}
+$("#copy").addEventListener("click",()=>{ if(!$("#who").value.trim()){toast("Add your name first");$("#who").focus();return;} copyText(toText(collect()), $("#copyBox")); });
+
+/* ---------- parse WhatsApp text ---------- */
+function parseText(txt){
+  const r={name:"",votes:{},wants:{},comments:{},wishlist:""};
+  const vmap=Object.fromEntries(LABELS.map(([v,l])=>[l.toLowerCase(),v]));
+  const lines=txt.replace(/\r/g,"").split("\n"); let inC=false, wish=null;
+  for(let raw of lines){
+    const line=raw.trim();
+    if(wish!==null){ wish+="\n"+raw; continue; }
+    if(!line || /^fcc app feedback/i.test(line) || /^—/.test(line)) continue;
+    let m;
+    if((m=line.match(/^name:\s*(.+)$/i))){ r.name=m[1].trim(); inC=false; continue; }
+    if(/^comments:?$/i.test(line)){ inC=true; continue; }
+    if((m=line.match(/^wishlist:\s*(.*)$/i))){ wish=m[1]; continue; }
+    if(inC && (m=line.match(/^[•\-*]\s*([^:]+):\s*(.+)$/))){ const id=byTitle[m[1].trim().toLowerCase()]; if(id) r.comments[id]=m[2].trim(); continue; }
+    if((m=line.match(/^([^:]+):\s*(.+)$/))){
+      const v=vmap[m[1].trim().toLowerCase()]; if(!v) continue;
+      m[2].split(";").map(s=>s.trim().toLowerCase()).forEach(t=>{ const id=byTitle[t]; if(!id) return;
+        if(fById(id).sec.kind==="idea") r.wants[id]=v; else r.votes[id]=v; });
+    }
+  }
+  if(wish!==null) r.wishlist=wish.trim();
+  return r;
+}
+
+/* ---------- board / db ---------- */
+let db=null, user=null, canWrite=false, responses=[], backlog=[];
+function show(view){
+  $("#t-review").setAttribute("aria-selected",view==="review"); $("#t-board").setAttribute("aria-selected",view==="board");
+  $("#v-review").classList.toggle("hide",view!=="review"); $("#v-board").classList.toggle("hide",view!=="board");
+  window.scrollTo(0,0);
+}
+$("#t-review").onclick=()=>show("review"); $("#t-board").onclick=()=>show("board");
+
+async function saveResponse(r, source){
+  if(!db) return false;
+  try{ await db.collection("responses").add({...r, source, createdAt:new Date().toISOString()}); return true; }
+  catch(e){ toast(e && e.code==="quota_exceeded" ? "Board is full — export and clear old items" : "Couldn't save — check you're signed in as Reuben"); return false; }
+}
+$("#saveDirect").addEventListener("click", async ()=>{
+  const r=collect(); if(!r.name){toast("Add the person's name");$("#who").focus();return;}
+  if(await saveResponse(r,"meeting")){
+    toast(`Saved ${r.name}'s answers`);
+    state.votes={};state.wants={};state.comments={}; $("#who").value=""; $("#wish").value=""; renderReview(); window.scrollTo(0,0);
+  }
+});
+$("#importBtn").addEventListener("click", async ()=>{
+  const txt=$("#importBox").value; if(!txt.trim()) return toast("Paste a reply first");
+  const r=parseText(txt);
+  const n=Object.keys(r.votes).length+Object.keys(r.wants).length;
+  if(!r.name && !n) return toast("That doesn't look like a feedback message");
+  if(await saveResponse(r,"whatsapp")){ $("#importBox").value=""; toast(`Imported ${r.name||"reply"} — ${n} answers`); }
+});
+$("#bAdd").addEventListener("click", async ()=>{
+  const title=$("#bTitle").value.trim(); if(!title) return toast("Write the idea first");
+  try{
+    await db.collection("backlog").add({title, raisedBy:$("#bBy").value.trim(), type:$("#bType").value, priority:$("#bPri").value, notes:$("#bNotes").value.trim(), status:"open", createdAt:new Date().toISOString()});
+    $("#bTitle").value="";$("#bNotes").value=""; $("#bTitle").focus(); toast("Added to backlog");
+  }catch{ toast("Couldn't save the item"); }
+});
+
+function aggregate(){
+  const agg={}; ALL.forEach(f=>{ agg[f.id]={comments:[]}; f.sec.opts.forEach(([v])=>agg[f.id][v]=0); });
+  responses.forEach(r=>{
+    for(const [id,v] of Object.entries({...(r.votes||{}),...(r.wants||{})})) if(agg[id]&&agg[id][v]!==undefined) agg[id][v]++;
+    for(const [id,c] of Object.entries(r.comments||{})) agg[id]?.comments.push({who:r.name||"?",c});
+  });
+  return agg;
+}
+const COL={keep:"var(--pitch)",change:"var(--sky)",trim:"var(--gold)",remove:"var(--ball)",new:"var(--mute)",less:"var(--gold)",off:"var(--ball)",unseen:"var(--mute)",must:"var(--pitch)",nice:"var(--sky)",skip:"var(--mute)"};
+function scoreOf(f,a){
+  if(f.sec.kind==="idea") return {flag:"", s:a.must*2+a.nice};
+  if(f.sec.opts===MAIL){ const neg=a.less+a.off; return {flag: neg>a.keep&&neg>0?"red":"", s:neg*1.5+a.unseen*.5}; }
+  const neg=a.trim+a.remove, tot=a.keep+a.change+a.trim+a.remove+a.new;
+  return {flag: neg>a.keep&&neg>0?"red":(a.new>0&&a.new>=tot/2?"blue":""), s:a.change+a.trim+a.remove*1.5+a.new*.5};
+}
+function renderBoard(){
+  const agg=aggregate(); let flagged=0;
+  const html = SECTIONS.map(s=>{
+    const rows=s.items.map(f=>{const a=agg[f.id]; const tot=s.opts.reduce((n,[v])=>n+a[v],0); const sc=scoreOf(f,a); if(sc.flag) flagged++; return {f,a,tot,...sc};}).sort((x,y)=>y.s-x.s);
+    return `<div class="bsec" style="--c:${s.c}">${esc(s.title)}</div>` + rows.map(({f,a,tot,flag})=>`
+    <div class="row"><div class="top"><span class="name">${esc(f.t)}</span>
+      <span>${flag==="red"?'<span class="flag">Review</span>':flag==="blue"?'<span class="flag blue">Unknown</span>':""}
+      ${canWrite?`<button class="btn sec sm" data-promote="${f.id}">To backlog</button>`:""}</span></div>
+      <div class="bar">${tot?s.opts.map(([v])=>a[v]?`<span style="width:${a[v]/tot*100}%;background:${COL[v]}"></span>`:"").join(""):""}</div>
+      <div class="counts">${s.opts.map(([v,l])=>`${l} ${a[v]}`).join(" · ")}</div>
+      ${a.comments.map(c=>`<p class="cmt"><b>${esc(c.who)}:</b> ${esc(c.c)}</p>`).join("")}
+    </div>`).join("");
+  }).join("");
+  $("#sResp").textContent=responses.length; $("#sBack").textContent=backlog.length; $("#sFlag").textContent=flagged;
+  $("#verdicts").innerHTML = responses.length ? html : `<p class="empty">No responses yet. Import a WhatsApp reply or save one from the Review tab.</p>`;
+  const w=responses.filter(r=>r.wishlist);
+  $("#wishes").innerHTML = w.length ? w.map(r=>`<p class="cmt"><b>${esc(r.name||"?")}:</b> ${esc(r.wishlist)}</p>`).join("") : `<p class="empty">No wishlist comments yet.</p>`;
+  $("#resps").innerHTML = responses.length ? responses.slice().sort((a,b)=>(a.createdAt||"").localeCompare(b.createdAt||"")).map(r=>`
+    <div class="row"><div class="top"><span class="name">${esc(r.name||"Unnamed")}</span>
+    <span class="counts">${esc(r.source||"")} · ${Object.keys(r.votes||{}).length+Object.keys(r.wants||{}).length} answers
+    ${canWrite?` <button class="btn sec sm" data-delr="${esc(r._id)}">Delete</button>`:""}</span></div></div>`).join("") : `<p class="empty">No responses yet.</p>`;
+  renderBacklog();
+}
+const PRI_ORDER={must:0,should:1,could:2,"":3,wont:4};
+function renderBacklog(){
+  $("#backlog").innerHTML = backlog.length ? backlog.slice().sort((a,b)=>(PRI_ORDER[a.priority||""]-PRI_ORDER[b.priority||""])||(a.createdAt||"").localeCompare(b.createdAt||"")).map(b=>`
+    <div class="row" data-bid="${esc(b._id)}"><div class="top"><span class="name">${esc(b.title)}</span>
+      ${b.priority?`<span class="pill ${esc(b.priority)}">${esc({must:"Must",should:"Should",could:"Could",wont:"Won't"}[b.priority])}</span>`:""}</div>
+      <div class="counts">${esc({change:"Change",new:"New feature",remove:"Remove / trim",bug:"Bug"}[b.type]||b.type)}${b.raisedBy?" · raised by "+esc(b.raisedBy):""}</div>
+      ${b.notes?`<p class="cmt">${esc(b.notes)}</p>`:""}
+      ${canWrite?`<div class="meta">
+        <select data-f="priority" aria-label="Priority">${[["","Priority…"],["must","Must"],["should","Should"],["could","Could"],["wont","Won't"]].map(([v,l])=>`<option value="${v}" ${b.priority===v?"selected":""}>${l}</option>`).join("")}</select>
+        <select data-f="effort" aria-label="Effort">${[["","Effort…"],["S","S"],["M","M"],["L","L"]].map(([v,l])=>`<option value="${v}" ${b.effort===v?"selected":""}>${l}</option>`).join("")}</select>
+        <select data-f="status" aria-label="Status">${[["open","Open"],["agreed","Agreed"],["parked","Parked"],["done","Done"]].map(([v,l])=>`<option value="${v}" ${b.status===v?"selected":""}>${l}</option>`).join("")}</select>
+        <button class="btn sec sm" data-delb="1">Delete</button></div>`:`<span class="pill">${esc(b.status||"open")}</span>`}
+    </div>`).join("") : `<p class="empty">Empty. Add ideas from the parking lot or send a feature here with "To backlog".</p>`;
+}
+$("#v-board").addEventListener("click", async e=>{
+  const p=e.target.closest("[data-promote]");
+  if(p){ const id=p.dataset.promote; const isIdea=fById(id).sec.kind==="idea";
+    try{ await db.collection("backlog").add({title:titleOf(id), featureId:id, type:isIdea?"new":"change", priority:"", notes:"", raisedBy:"Trainers review", status:"open", createdAt:new Date().toISOString()}); toast("Added to backlog"); }catch{ toast("Couldn't save the item"); } return; }
+  const d=e.target.closest("[data-delb]");
+  if(d){ const id=d.closest("[data-bid]").dataset.bid; if(confirm("Delete this backlog item?")) try{ await db.doc("backlog/"+id).delete(); }catch{ toast("Couldn't delete"); } return; }
+  const dr=e.target.closest("[data-delr]");
+  if(dr){ if(confirm("Delete this response?")) try{ await db.doc("responses/"+dr.dataset.delr).delete(); }catch{ toast("Couldn't delete"); } }
+});
+$("#v-board").addEventListener("change", async e=>{
+  const s=e.target.closest("select[data-f]"); if(!s) return;
+  const id=s.closest("[data-bid]").dataset.bid;
+  try{ await db.doc("backlog/"+id).update({[s.dataset.f]:s.value}); }catch{ toast("Couldn't update"); }
+});
+$("#exportBtn").addEventListener("click",()=>{
+  const agg=aggregate(); const L=["FCC APP REVIEW — TRAINERS ("+responses.length+" responses)"];
+  SECTIONS.forEach(s=>{ L.push("",s.title.toUpperCase()); s.items.forEach(f=>{const a=agg[f.id]; L.push(`- ${f.t}: ${s.opts.map(([v,l])=>l+" "+a[v]).join(", ")}`); a.comments.forEach(c=>L.push(`    ${c.who}: ${c.c}`));}); });
+  L.push("","WISHLIST"); responses.filter(r=>r.wishlist).forEach(r=>L.push(`- ${r.name}: ${r.wishlist.replace(/\n+/g," ")}`));
+  L.push("","BACKLOG"); backlog.forEach(b=>L.push(`- [${b.priority||"unset"}/${b.effort||"?"}/${b.status||"open"}] (${b.type}) ${b.title}${b.raisedBy?" — "+b.raisedBy:""}${b.notes?" — "+b.notes.replace(/\n+/g," "):""}`));
+  copyText(L.join("\n"), $("#exportBox"));
+});
+
+renderReview();
+if(!window.claude || !window.claude.use){ $("#t-board").classList.add("hide"); }
+(async()=>{
+  try{
+    if(!window.claude || !window.claude.use) return;
+    const [d,u] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+    db=d; user=u;
+    if(!db) return;
+    const w = user ? await user.can("data.write") : null;
+    canWrite = w !== false;
+    if(!canWrite) return;
+    $("#boardLocked").classList.add("hide"); $("#boardBody").classList.remove("hide");
+    $("#saveDirect").classList.remove("hide");
+    $("#sendNote").textContent="You're signed in as a board editor — \"Save to board\" records answers directly (use it for people in the room).";
+    db.collection("responses").onSnapshot(s=>{ responses=s.docs.map(x=>({...x.data(),_id:x.id})); renderBoard(); }, ()=>{});
+    db.collection("backlog").onSnapshot(s=>{ backlog=s.docs.map(x=>({...x.data(),_id:x.id})); renderBacklog(); $("#sBack").textContent=backlog.length; }, ()=>{});
+    renderBoard();
+  }catch(e){ /* page works without the board */ }
+})();
+</script>
+</body>
+</html>
