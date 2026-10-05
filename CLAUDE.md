@@ -19,6 +19,7 @@ CLAUDE.md                  # this file (not served in any linked way)
   - For anything sensitive, give the slug an unguessable suffix (for example `fcc-budget-7k2q9x`).
 - **Page register** (the only list of pages; keep it updated here, not on the site):
   - `fcc-shed-options`: FCC shed kits vs the kommune-approved design, Karlebo Cricket Ground.
+  - `fcc-app-review`: FCC trainers app review — catalogue + feedback form for the 6 Oct 2026 trainers meeting. Exceptions: own cricket theme (not Nordic Anchor), supports dark mode.
 
 ## Style conventions (match the existing pages)
 
